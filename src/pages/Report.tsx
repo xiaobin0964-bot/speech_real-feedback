@@ -74,22 +74,22 @@ export default function Report() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-3 sm:p-4 pb-16">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-800">📊 反馈报告</h1>
+        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">📊 反馈报告</h1>
             <button
               onClick={() => navigate('/')}
-              className="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition"
+              className="bg-gray-200 text-gray-800 px-4 sm:px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition text-sm sm:text-base"
             >
               返回首页
             </button>
           </div>
 
-          <div className="border-b border-gray-200 pb-6 mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">{report.session.title}</h2>
-            <div className="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
+          <div className="border-b border-gray-200 pb-4 sm:pb-6 mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-2 sm:mb-3">{report.session.title}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
               <div>
                 <span className="font-medium">设定时长：</span>
                 {report.session.duration_minutes} 分钟
@@ -105,68 +105,67 @@ export default function Report() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 text-center">
-              <div className="text-5xl mb-3">👍</div>
-              <div className="text-4xl font-bold text-green-600 mb-2">{report.stats.thumb_up_count}</div>
-              <div className="text-gray-700 font-medium">好评总数</div>
+          <div className="grid grid-cols-3 gap-2 sm:gap-6 mb-4 sm:mb-8">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-3 sm:p-6 text-center">
+              <div className="text-3xl sm:text-5xl mb-1 sm:mb-3">👍</div>
+              <div className="text-2xl sm:text-4xl font-bold text-green-600 mb-1 sm:mb-2">{report.stats.thumb_up_count}</div>
+              <div className="text-gray-700 font-medium text-xs sm:text-base">好评总数</div>
             </div>
 
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 text-center">
-              <div className="text-5xl mb-3">🤔</div>
-              <div className="text-4xl font-bold text-orange-600 mb-2">{report.stats.thinking_count}</div>
-              <div className="text-gray-700 font-medium">需改进总数</div>
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-3 sm:p-6 text-center">
+              <div className="text-3xl sm:text-5xl mb-1 sm:mb-3">🤔</div>
+              <div className="text-2xl sm:text-4xl font-bold text-orange-600 mb-1 sm:mb-2">{report.stats.thinking_count}</div>
+              <div className="text-gray-700 font-medium text-xs sm:text-base">需改进总数</div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 text-center">
-              <div className="text-5xl mb-3">📈</div>
-              <div className="text-4xl font-bold text-blue-600 mb-2">{report.stats.total_feedback}</div>
-              <div className="text-gray-700 font-medium">总反馈次数</div>
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 sm:p-6 text-center">
+              <div className="text-3xl sm:text-5xl mb-1 sm:mb-3">📈</div>
+              <div className="text-2xl sm:text-4xl font-bold text-blue-600 mb-1 sm:mb-2">{report.stats.total_feedback}</div>
+              <div className="text-gray-700 font-medium text-xs sm:text-base">总反馈次数</div>
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">时间轴分布</h3>
-            <p className="text-sm text-gray-600 mb-2">
+          <div className="bg-gray-50 rounded-xl p-3 sm:p-6">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-4">时间轴分布</h3>
+            <p className="text-xs sm:text-sm text-gray-600 mb-2">
               展示 👍 和 🤔️ 在演讲过程中的时间分布，帮助你发现哪段讲得好、哪段需要改进
             </p>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-4 h-4 bg-yellow-400 opacity-30 rounded"></div>
-              <p className="text-sm text-yellow-700 font-medium">
+            <div className="flex items-center gap-2 mb-2 sm:mb-4">
+              <div className="w-3 sm:w-4 h-3 sm:h-4 bg-yellow-400 opacity-30 rounded"></div>
+              <p className="text-xs sm:text-sm text-yellow-700 font-medium">
                 黄色区域：开头10秒和结尾10秒，最需要注意的区域
               </p>
             </div>
-            <div className="h-[450px] md:h-[500px] flex items-center justify-center">
+            <div className="h-[300px] sm:h-[400px] md:h-[500px] flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={report.timeDistribution} margin={{ top: 30, right: 30, left: 45, bottom: 70 }}>
+                <LineChart data={report.timeDistribution} margin={{ top: 20, right: 10, left: 30, bottom: 60 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis 
                     dataKey="time" 
-                    label={{ value: '时间（秒）', position: 'insideBottom', offset: 10, fontSize: 14, fontWeight: '600', dy: 20 }}
-                    tick={{ fontSize: 12, fill: '#6b7280' }}
+                    label={{ value: '时间（秒）', position: 'insideBottom', offset: 10, fontSize: 12, fontWeight: '600', dy: 15 }}
+                    tick={{ fontSize: 10, fill: '#6b7280' }}
                     tickFormatter={(value: any) => `${value}s`}
                     interval="preserveStartEnd"
                   />
                   <YAxis 
-                    label={{ value: '反馈次数', angle: -90, position: 'insideLeft', offset: -10
-                      , fontSize: 14, fontWeight: '600' }}
-                    tick={{ fontSize: 12, fill: '#6b7280' }}
+                    label={{ value: '反馈次数', angle: -90, position: 'insideLeft', offset: -5, fontSize: 12, fontWeight: '600' }}
+                    tick={{ fontSize: 10, fill: '#6b7280' }}
                     tickFormatter={(value: any) => Math.abs(value).toString()}
                   />
                   <Tooltip 
                     formatter={(value: number, name: string) => [Math.abs(value), name === 'thumb_up' ? '👍 好评' : '🤔 需改进']}
                     labelFormatter={(label) => `时间：${label} 秒`}
-                    contentStyle={{ fontSize: 14, borderRadius: 8, boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                    contentStyle={{ fontSize: 12, borderRadius: 8, boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                   />
                   <Legend 
                     verticalAlign="top" 
-                    height={50}
-                    wrapperStyle={{ fontSize: 14, fontWeight: '500' }}
+                    height={40}
+                    wrapperStyle={{ fontSize: 12, fontWeight: '500' }}
                   />
                   <ReferenceArea x1={0} x2={10} fill="#fbbf24" fillOpacity={0.25} />
                   <ReferenceArea x1={report.session.duration_minutes * 60 - 10} x2={report.session.duration_minutes * 60} fill="#fbbf24" fillOpacity={0.25} />
-                  <Line type="monotone" dataKey="thumb_up" name="👍 好评" stroke="#22c55e" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
-                  <Line type="monotone" dataKey="thinking" name="🤔 需改进" stroke="#f97316" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
+                  <Line type="monotone" dataKey="thumb_up" name="👍 好评" stroke="#22c55e" strokeWidth={2} dot={false} activeDot={{ r: 5 }} />
+                  <Line type="monotone" dataKey="thinking" name="🤔 需改进" stroke="#f97316" strokeWidth={2} dot={false} activeDot={{ r: 5 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -233,7 +232,7 @@ export default function Report() {
         </div>
       </div>
       
-      <div className="fixed bottom-0 left-0 right-0 text-center py-4 text-gray-500 text-sm bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="fixed bottom-0 left-0 right-0 text-center py-3 sm:py-4 text-gray-500 text-xs sm:text-sm bg-gradient-to-br from-blue-50 to-indigo-100">
         网页所有权 @肖彬 XiaoBin  wechat:_Bin_Xiao_
       </div>
     </div>

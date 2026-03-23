@@ -37,14 +37,14 @@ export default function CreateSession() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">创建演讲</h1>
-          <p className="text-gray-600">填写演讲信息，开始收集实时反馈</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center justify-center p-4 pb-16">
+      <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 w-full max-w-md">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">创建演讲</h1>
+          <p className="text-gray-600 text-sm sm:text-base">填写演讲信息，开始收集实时反馈</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
               演讲题目
@@ -103,7 +103,7 @@ export default function CreateSession() {
         </form>
       </div>
       
-      <div className="fixed bottom-0 left-0 right-0 text-center py-4 text-gray-500 text-sm bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="fixed bottom-0 left-0 right-0 text-center py-3 sm:py-4 text-gray-500 text-xs sm:text-sm bg-gradient-to-br from-blue-50 to-indigo-100">
         网页所有权 @肖彬 XiaoBin  wechat:_Bin_Xiao_
       </div>
     </div>

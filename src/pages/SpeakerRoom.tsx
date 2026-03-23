@@ -124,13 +124,13 @@ export default function SpeakerRoom() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-3 sm:p-4 pb-16">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">{session.title}</h1>
-            <p className="text-gray-600">时长：{session.duration_minutes} 分钟</p>
-            <div className="mt-2 inline-flex items-center px-4 py-2 rounded-full text-sm font-medium">
+        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8">
+          <div className="text-center mb-4 sm:mb-8">
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-800 mb-2">{session.title}</h1>
+            <p className="text-gray-600 text-sm sm:text-base">时长：{session.duration_minutes} 分钟</p>
+            <div className="mt-2 inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium">
               {session.status === 'created' && (
                 <span className="bg-yellow-100 text-yellow-800">等待开始</span>
               )}
@@ -143,59 +143,59 @@ export default function SpeakerRoom() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div className="bg-gray-50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">观众扫码进入</h3>
-              <div className="flex justify-center mb-4">
-                <div className="bg-white p-6 rounded-lg shadow-inner">
-                  <QRCode value={getRoomUrl()} size={280} level="M" includeMargin={true} />
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-8 mb-4 sm:mb-8">
+            <div className="bg-gray-50 rounded-xl p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 text-center">观众扫码进入</h3>
+              <div className="flex justify-center mb-3 sm:mb-4">
+                <div className="bg-white p-3 sm:p-6 rounded-lg shadow-inner">
+                  <QRCode value={getRoomUrl()} size={180} level="M" includeMargin={true} />
                 </div>
               </div>
-              <p className="text-sm text-gray-600 text-center mb-2">或复制链接分享：</p>
-              <div className="flex items-center gap-2">
+              <p className="text-xs sm:text-sm text-gray-600 text-center mb-2">或复制链接分享：</p>
+              <div className="flex flex-col sm:flex-row items-center gap-2">
                 <input
                   type="text"
                   value={getRoomUrl()}
                   readOnly
-                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white"
+                  className="flex-1 w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg bg-white"
                 />
                 <button
                   onClick={() => navigator.clipboard.writeText(getRoomUrl())}
-                  className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition"
+                  className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition whitespace-nowrap"
                 >
                   复制
                 </button>
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">实时反馈统计</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white rounded-lg p-4 text-center shadow-sm">
-                  <div className="text-4xl mb-2">👍</div>
-                  <div className="text-3xl font-bold text-green-600">{stats.thumb_up_count}</div>
-                  <div className="text-sm text-gray-600 mt-1">好评</div>
+            <div className="bg-gray-50 rounded-xl p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 text-center">实时反馈统计</h3>
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                <div className="bg-white rounded-lg p-2 sm:p-4 text-center shadow-sm">
+                  <div className="text-3xl sm:text-4xl mb-1 sm:mb-2">👍</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-green-600">{stats.thumb_up_count}</div>
+                  <div className="text-xs sm:text-sm text-gray-600 mt-1">好评</div>
                 </div>
-                <div className="bg-white rounded-lg p-4 text-center shadow-sm">
-                  <div className="text-4xl mb-2">🤔</div>
-                  <div className="text-3xl font-bold text-orange-600">{stats.thinking_count}</div>
-                  <div className="text-sm text-gray-600 mt-1">需改进</div>
+                <div className="bg-white rounded-lg p-2 sm:p-4 text-center shadow-sm">
+                  <div className="text-3xl sm:text-4xl mb-1 sm:mb-2">🤔</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-orange-600">{stats.thinking_count}</div>
+                  <div className="text-xs sm:text-sm text-gray-600 mt-1">需改进</div>
                 </div>
               </div>
               {session.status === 'live' && (
-                <div className="mt-4 text-center text-sm text-gray-600">
+                <div className="mt-3 sm:mt-4 text-center text-xs sm:text-sm text-gray-600">
                   总反馈：{stats.total_feedback} 次
                 </div>
               )}
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center">
             {session.status === 'created' && (
               <button
                 onClick={handleStart}
                 disabled={actionLoading}
-                className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                className="bg-green-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-lg"
               >
                 {actionLoading ? '开始中...' : '🎤 开始演讲'}
               </button>
@@ -204,7 +204,7 @@ export default function SpeakerRoom() {
               <button
                 onClick={handleEnd}
                 disabled={actionLoading}
-                className="bg-red-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                className="bg-red-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-lg"
               >
                 {actionLoading ? '结束中...' : '⏹️ 结束演讲'}
               </button>
@@ -212,14 +212,14 @@ export default function SpeakerRoom() {
             {session.status === 'ended' && (
               <button
                 onClick={() => navigate(`/session/${id}/report`)}
-                className="bg-indigo-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition text-lg"
+                className="bg-indigo-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition text-base sm:text-lg"
               >
                 📊 查看报告
               </button>
             )}
             <button
               onClick={() => navigate('/')}
-              className="bg-gray-200 text-gray-800 px-8 py-4 rounded-lg font-semibold hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition text-lg"
+              className="bg-gray-200 text-gray-800 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition text-base sm:text-lg"
             >
               返回首页
             </button>
@@ -227,7 +227,7 @@ export default function SpeakerRoom() {
         </div>
       </div>
       
-      <div className="fixed bottom-0 left-0 right-0 text-center py-4 text-gray-500 text-sm bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="fixed bottom-0 left-0 right-0 text-center py-3 sm:py-4 text-gray-500 text-xs sm:text-sm bg-gradient-to-br from-blue-50 to-indigo-100">
         网页所有权 @肖彬 XiaoBin  wechat:_Bin_Xiao_
       </div>
     </div>
