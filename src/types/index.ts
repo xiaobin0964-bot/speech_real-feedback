@@ -29,6 +29,7 @@ export interface FeedbackStats {
 
 export interface TimeDistribution {
   time: number
+  segmentLabel?: string
   thumb_up: number
   thinking: number
 }

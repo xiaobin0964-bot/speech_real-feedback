@@ -100,25 +100,32 @@ export async function getFeedbackStats(sessionId: string): Promise<FeedbackStats
 
 export function getTimeDistribution(feedback: Feedback[], durationMinutes: number): TimeDistribution[] {
   const durationSeconds = durationMinutes * 60
+  const segmentCount = 50
+  const segmentDuration = Math.ceil(durationSeconds / segmentCount)
+  
   const distribution: { [key: number]: { thumb_up: number; thinking: number } } = {}
   
-  for (let i = 0; i <= durationSeconds; i++) {
+  for (let i = 0; i < segmentCount; i++) {
     distribution[i] = { thumb_up: 0, thinking: 0 }
   }
   
   feedback.forEach(f => {
     const second = f.timestamp
-    if (second >= 0 && second <= durationSeconds) {
+    if (second >= 0 && second < durationSeconds) {
+      const segmentIndex = Math.floor(second / segmentDuration)
+      const safeIndex = Math.min(segmentIndex, segmentCount - 1)
+      
       if (f.type === 'thumb_up') {
-        distribution[second].thumb_up++
+        distribution[safeIndex].thumb_up++
       } else {
-        distribution[second].thinking++
+        distribution[safeIndex].thinking++
       }
     }
   })
   
-  return Object.entries(distribution).map(([time, counts]) => ({
-    time: parseInt(time),
+  return Object.entries(distribution).map(([segment, counts]) => ({
+    time: parseInt(segment),
+    segmentLabel: `${parseInt(segment) * segmentDuration}-${Math.min((parseInt(segment) + 1) * segmentDuration, durationSeconds)}s`,
     thumb_up: counts.thumb_up,
     thinking: -counts.thinking
   }))

@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceArea } from 'recharts'
 import { generateReport } from '../lib/api'
+import html2canvas from 'html2canvas'
 
 export default function Report() {
   const { id } = useParams<{ id: string }>()
@@ -9,6 +10,8 @@ export default function Report() {
   const [report, setReport] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [saving, setSaving] = useState(false)
+  const reportRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     loadReport()
@@ -34,6 +37,31 @@ export default function Report() {
       hour: '2-digit',
       minute: '2-digit'
     })
+  }
+
+  const saveReport = async () => {
+    if (!reportRef.current) return
+    
+    setSaving(true)
+    try {
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      })
+      
+      const link = document.createElement('a')
+      const fileName = `${report.session.title}_反馈报告_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.png`
+      link.download = fileName
+      link.href = canvas.toDataURL('image/png')
+      link.click()
+    } catch (err) {
+      console.error('保存报告失败:', err)
+      alert('保存失败，请重试')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const calculateDuration = () => {
@@ -76,15 +104,24 @@ export default function Report() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-3 sm:p-4 pb-16">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8 mb-4 sm:mb-6">
+        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8 mb-4 sm:mb-6" ref={reportRef}>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">📊 反馈报告</h1>
-            <button
-              onClick={() => navigate('/')}
-              className="bg-gray-200 text-gray-800 px-4 sm:px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition text-sm sm:text-base"
-            >
-              返回首页
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={saveReport}
+                disabled={saving}
+                className="bg-green-600 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition disabled:bg-gray-400 text-sm sm:text-base"
+              >
+                {saving ? '保存中...' : '💾 保存报告'}
+              </button>
+              <button
+                onClick={() => navigate('/')}
+                className="bg-gray-200 text-gray-800 px-4 sm:px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition text-sm sm:text-base"
+              >
+                返回首页
+              </button>
+            </div>
           </div>
 
           <div className="border-b border-gray-200 pb-4 sm:pb-6 mb-4 sm:mb-6">
@@ -128,12 +165,12 @@ export default function Report() {
           <div className="bg-gray-50 rounded-xl p-3 sm:p-6">
             <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-4">时间轴分布</h3>
             <p className="text-xs sm:text-sm text-gray-600 mb-2">
-              展示 👍 和 🤔️ 在演讲过程中的时间分布，帮助你发现哪段讲得好、哪段需要改进
+              展示 👍 和 🤔️ 在演讲过程中的时间分布，将演讲分为 {report.session.duration_minutes * 60 / 50 | 0} 秒一个区间，共50个时间段，帮助你发现哪段讲得好、哪段需要改进
             </p>
             <div className="flex items-center gap-2 mb-2 sm:mb-4">
               <div className="w-3 sm:w-4 h-3 sm:h-4 bg-yellow-400 opacity-30 rounded"></div>
               <p className="text-xs sm:text-sm text-yellow-700 font-medium">
-                黄色区域：开头10秒和结尾10秒，最需要注意的区域
+                黄色区域：前2个时间段和后2个时间段，最需要注意的区域
               </p>
             </div>
             <div className="h-[300px] sm:h-[400px] md:h-[500px] flex items-center justify-center">
@@ -141,11 +178,10 @@ export default function Report() {
                 <LineChart data={report.timeDistribution} margin={{ top: 20, right: 10, left: 30, bottom: 60 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis 
-                    dataKey="time" 
-                    label={{ value: '时间（秒）', position: 'insideBottom', offset: 10, fontSize: 12, fontWeight: '600', dy: 15 }}
-                    tick={{ fontSize: 10, fill: '#6b7280' }}
-                    tickFormatter={(value: any) => `${value}s`}
-                    interval="preserveStartEnd"
+                    dataKey="segmentLabel" 
+                    label={{ value: '时间段', position: 'insideBottom', offset: 10, fontSize: 12, fontWeight: '600', dy: 15 }}
+                    tick={{ fontSize: 9, fill: '#6b7280' }}
+                    interval={4}
                   />
                   <YAxis 
                     label={{ value: '反馈次数', angle: -90, position: 'insideLeft', offset: -5, fontSize: 12, fontWeight: '600' }}
@@ -154,7 +190,7 @@ export default function Report() {
                   />
                   <Tooltip 
                     formatter={(value: number, name: string) => [Math.abs(value), name === 'thumb_up' ? '👍 好评' : '🤔 需改进']}
-                    labelFormatter={(label) => `时间：${label} 秒`}
+                    labelFormatter={(_, payload) => payload && payload[0] ? `时间段：${payload[0].payload.segmentLabel}` : ''}
                     contentStyle={{ fontSize: 12, borderRadius: 8, boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                   />
                   <Legend 
@@ -162,8 +198,8 @@ export default function Report() {
                     height={40}
                     wrapperStyle={{ fontSize: 12, fontWeight: '500' }}
                   />
-                  <ReferenceArea x1={0} x2={10} fill="#fbbf24" fillOpacity={0.25} />
-                  <ReferenceArea x1={report.session.duration_minutes * 60 - 10} x2={report.session.duration_minutes * 60} fill="#fbbf24" fillOpacity={0.25} />
+                  <ReferenceArea x1={0} x2={2} fill="#fbbf24" fillOpacity={0.25} />
+                  <ReferenceArea x1={48} x2={50} fill="#fbbf24" fillOpacity={0.25} />
                   <Line type="monotone" dataKey="thumb_up" name="👍 好评" stroke="#22c55e" strokeWidth={2} dot={false} activeDot={{ r: 5 }} />
                   <Line type="monotone" dataKey="thinking" name="🤔 需改进" stroke="#f97316" strokeWidth={2} dot={false} activeDot={{ r: 5 }} />
                 </LineChart>
@@ -208,19 +244,19 @@ export default function Report() {
             )}
 
             {(() => {
-              const first10Seconds = report.timeDistribution.filter((d: any) => d.time >= 0 && d.time <= 10)
-              const last10Seconds = report.timeDistribution.filter((d: any) => d.time >= report.session.duration_minutes * 60 - 10)
-              const first10Thinking = first10Seconds.reduce((sum: number, d: any) => sum + Math.abs(d.thinking), 0)
-              const last10Thinking = last10Seconds.reduce((sum: number, d: any) => sum + Math.abs(d.thinking), 0)
+              const firstSegments = report.timeDistribution.filter((_: any, index: number) => index < 2)
+              const lastSegments = report.timeDistribution.filter((_: any, index: number) => index >= 48)
+              const firstThinking = firstSegments.reduce((sum: number, d: any) => sum + Math.abs(d.thinking), 0)
+              const lastThinking = lastSegments.reduce((sum: number, d: any) => sum + Math.abs(d.thinking), 0)
               
-              if (first10Thinking > 0 || last10Thinking > 0) {
+              if (firstThinking > 0 || lastThinking > 0) {
                 return (
                   <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
                     <p className="text-yellow-800">
                       <strong>⚠️ 开头或结尾需要改进</strong> 
-                      {first10Thinking > 0 && ` 开头10秒有 ${first10Thinking} 条需改进反馈`}
-                      {first10Thinking > 0 && last10Thinking > 0 && '，'}
-                      {last10Thinking > 0 && `结尾10秒有 ${last10Thinking} 条需改进反馈`}
+                      {firstThinking > 0 && ` 前2个时间段有 ${firstThinking} 条需改进反馈`}
+                      {firstThinking > 0 && lastThinking > 0 && '，'}
+                      {lastThinking > 0 && `后2个时间段有 ${lastThinking} 条需改进反馈`}
                       。这两个时间段是观众注意力最集中的时刻，建议重点优化。
                     </p>
                   </div>
