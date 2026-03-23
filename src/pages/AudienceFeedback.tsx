@@ -166,6 +166,10 @@ export default function AudienceFeedback() {
           )}
         </div>
       </div>
+      
+      <div className="fixed bottom-0 left-0 right-0 text-center py-4 text-gray-500 text-sm bg-gradient-to-br from-purple-50 to-pink-100">
+        网页所有权 @肖彬 XiaoBin  wechat:_Bin_Xiao_
+      </div>
     </div>
   )
 }
