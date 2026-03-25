@@ -91,11 +91,26 @@ export async function getFeedbackStats(sessionId: string): Promise<FeedbackStats
   const thumb_up_count = feedback.filter(f => f.type === 'thumb_up').length
   const thinking_count = feedback.filter(f => f.type === 'thinking').length
   
+  const uniqueVisitors = new Set(feedback.map(f => f.visitor_id).filter(Boolean))
+  
   return {
     thumb_up_count,
     thinking_count,
-    total_feedback: feedback.length
+    total_feedback: feedback.length,
+    unique_visitors: uniqueVisitors.size
   }
+}
+
+export async function getAudienceCount(sessionId: string): Promise<number> {
+  const { data, error } = await supabase
+    .from('feedback')
+    .select('visitor_id')
+    .eq('session_id', sessionId)
+
+  if (error) throw error
+  
+  const uniqueVisitors = new Set(data?.map(f => f.visitor_id).filter(Boolean))
+  return uniqueVisitors.size
 }
 
 export function getTimeDistribution(feedback: Feedback[], durationMinutes: number): TimeDistribution[] {

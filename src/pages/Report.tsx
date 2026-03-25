@@ -159,6 +159,11 @@ export default function Report() {
               <div className="text-3xl sm:text-5xl mb-1 sm:mb-3">📈</div>
               <div className="text-2xl sm:text-4xl font-bold text-blue-600 mb-1 sm:mb-2">{report.stats.total_feedback}</div>
               <div className="text-gray-700 font-medium text-xs sm:text-base">总反馈次数</div>
+              {report.stats.unique_visitors > 0 && (
+                <div className="text-sm sm:text-base text-blue-500 mt-1 sm:mt-2">
+                  （{report.stats.unique_visitors} 人参与）
+                </div>
+              )}
             </div>
           </div>
 

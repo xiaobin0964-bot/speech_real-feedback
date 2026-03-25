@@ -25,6 +25,7 @@ export interface FeedbackStats {
   thumb_up_count: number
   thinking_count: number
   total_feedback: number
+  unique_visitors: number
 }
 
 export interface TimeDistribution {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import QRCode from 'qrcode.react'
-import { getSession, startSession, endSession, getFeedbackStats, subscribeToFeedback } from '../lib/api'
+import { getSession, startSession, endSession, getFeedbackStats, subscribeToFeedback, getAudienceCount } from '../lib/api'
 
 export default function SpeakerRoom() {
   const { id } = useParams<{ id: string }>()
@@ -10,6 +10,7 @@ export default function SpeakerRoom() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [stats, setStats] = useState({ thumb_up_count: 0, thinking_count: 0, total_feedback: 0 })
+  const [audienceCount, setAudienceCount] = useState(0)
   const [actionLoading, setActionLoading] = useState(false)
 
   useEffect(() => {
@@ -18,8 +19,8 @@ export default function SpeakerRoom() {
 
   useEffect(() => {
     if (session?.status === 'live') {
-      const subscription = subscribeToFeedback(id!, () => {
-        loadStats()
+      const subscription = subscribeToFeedback(id!, async () => {
+        await loadStats()
       })
       
       return () => {
@@ -40,6 +41,9 @@ export default function SpeakerRoom() {
       if (sessionData.status === 'live') {
         await loadStats()
       }
+      
+      const count = await getAudienceCount(id!)
+      setAudienceCount(count)
     } catch (err) {
       setError('加载演讲失败')
       console.error(err)
@@ -52,6 +56,9 @@ export default function SpeakerRoom() {
     try {
       const statsData = await getFeedbackStats(id!)
       setStats(statsData)
+      
+      const count = await getAudienceCount(id!)
+      setAudienceCount(count)
     } catch (err) {
       console.error('Failed to load stats:', err)
     }
@@ -151,6 +158,11 @@ export default function SpeakerRoom() {
                   <QRCode value={getRoomUrl()} size={180} level="M" includeMargin={true} />
                 </div>
               </div>
+              {audienceCount > 0 && (
+                <div className="text-center text-sm text-green-600 font-medium mb-2">
+                  👥 已加入 {audienceCount} 人
+                </div>
+              )}
               <p className="text-xs sm:text-sm text-gray-600 text-center mb-2">或复制链接分享：</p>
               <div className="flex flex-col sm:flex-row items-center gap-2">
                 <input
