@@ -4,7 +4,8 @@ import { createSession } from '../lib/api'
 
 export default function CreateSession() {
   const [title, setTitle] = useState('')
-  const [duration, setDuration] = useState(30)
+  const [name, setName] = useState('')
+  const [duration, setDuration] = useState(7)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
@@ -55,6 +56,21 @@ export default function CreateSession() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="例如：产品发布会演讲"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+              disabled={loading}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              姓名
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="请输入您的姓名"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
               disabled={loading}
             />

@@ -206,63 +206,174 @@ export default function Report() {
               </ResponsiveContainer>
             </div>
           </div>
+
+          {report.stats.total_feedback > 0 && (
+            <div className="mt-6">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4">📋 时间段统计</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4">
+                  <h4 className="text-lg font-bold text-green-700 mb-3">👍 好评 Top 5</h4>
+                  <div className="space-y-2">
+                    {(() => {
+                      const sortedThumbUp = [...report.timeDistribution]
+                        .filter((d: any) => d.thumb_up > 0)
+                        .sort((a: any, b: any) => b.thumb_up - a.thumb_up)
+                        .slice(0, 5)
+                      
+                      if (sortedThumbUp.length === 0) {
+                        return <p className="text-gray-500 text-sm">暂无好评数据</p>
+                      }
+                      
+                      return sortedThumbUp.map((d: any, index: number) => (
+                        <div key={index} className="flex items-center justify-between bg-white rounded-lg p-2 shadow-sm">
+                          <span className="text-gray-700 font-medium">{d.segmentLabel}</span>
+                          <span className="text-green-600 font-bold">{d.thumb_up} 次</span>
+                        </div>
+                      ))
+                    })()}
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4">
+                  <h4 className="text-lg font-bold text-orange-700 mb-3">🤔 需改进 Top 5</h4>
+                  <div className="space-y-2">
+                    {(() => {
+                      const sortedThinking = [...report.timeDistribution]
+                        .filter((d: any) => Math.abs(d.thinking) > 0)
+                        .sort((a: any, b: any) => Math.abs(b.thinking) - Math.abs(a.thinking))
+                        .slice(0, 5)
+                      
+                      if (sortedThinking.length === 0) {
+                        return <p className="text-gray-500 text-sm">暂无需改进数据</p>
+                      }
+                      
+                      return sortedThinking.map((d: any, index: number) => (
+                        <div key={index} className="flex items-center justify-between bg-white rounded-lg p-2 shadow-sm">
+                          <span className="text-gray-700 font-medium">{d.segmentLabel}</span>
+                          <span className="text-orange-600 font-bold">{Math.abs(d.thinking)} 次</span>
+                        </div>
+                      ))
+                    })()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <h3 className="text-xl font-bold text-gray-800 mb-4">💡 分析建议</h3>
           <div className="space-y-4">
-            {report.stats.thumb_up_count > report.stats.thinking_count && (
-              <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                <p className="text-green-800">
-                  <strong>整体表现优秀！</strong> 好评数量多于需改进数量，说明演讲内容得到了观众的认可。
-                </p>
-              </div>
-            )}
-            
-            {report.stats.thinking_count > report.stats.thumb_up_count && (
-              <div className="bg-orange-50 border-l-4 border-orange-500 p-4 rounded">
-                <p className="text-orange-800">
-                  <strong>需要改进！</strong> 需改进数量多于好评数量，建议回顾演讲内容，找出观众不理解的环节。
-                </p>
-              </div>
-            )}
-
-            {report.stats.total_feedback === 0 && (
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                <p className="text-blue-800">
-                  <strong>暂无反馈</strong> 本次演讲没有收到观众反馈，可能是观众参与度不高或反馈机制需要优化。
-                </p>
-              </div>
-            )}
-
-            {report.timeDistribution.some((d: any) => Math.abs(d.thinking) > d.thumb_up * 2) && (
-              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
-                <p className="text-yellow-800">
-                  <strong>注意高峰时段</strong> 时间轴显示某些时段的需改进反馈明显多于好评，建议重点回顾这些时间段的内容。
-                </p>
-              </div>
-            )}
-
             {(() => {
-              const firstSegments = report.timeDistribution.filter((_: any, index: number) => index < 2)
-              const lastSegments = report.timeDistribution.filter((_: any, index: number) => index >= 48)
-              const firstThinking = firstSegments.reduce((sum: number, d: any) => sum + Math.abs(d.thinking), 0)
-              const lastThinking = lastSegments.reduce((sum: number, d: any) => sum + Math.abs(d.thinking), 0)
+              const durationSeconds = report.session.duration_minutes * 60
+              const segmentDuration = Math.ceil(durationSeconds / 50)
+              const first30sSegments = Math.ceil(30 / segmentDuration)
+              const last30sSegments = Math.ceil(30 / segmentDuration)
               
-              if (firstThinking > 0 || lastThinking > 0) {
-                return (
-                  <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
-                    <p className="text-yellow-800">
-                      <strong>⚠️ 开头或结尾需要改进</strong> 
-                      {firstThinking > 0 && ` 前2个时间段有 ${firstThinking} 条需改进反馈`}
-                      {firstThinking > 0 && lastThinking > 0 && '，'}
-                      {lastThinking > 0 && `后2个时间段有 ${lastThinking} 条需改进反馈`}
-                      。这两个时间段是观众注意力最集中的时刻，建议重点优化。
-                    </p>
-                  </div>
-                )
+              const firstPart = report.timeDistribution.slice(0, first30sSegments)
+              const middlePart = report.timeDistribution.slice(first30sSegments, 50 - last30sSegments)
+              const lastPart = report.timeDistribution.slice(50 - last30sSegments)
+              
+              const firstThumbUp = firstPart.reduce((sum: number, d: any) => sum + d.thumb_up, 0)
+              const firstThinking = firstPart.reduce((sum: number, d: any) => sum + Math.abs(d.thinking), 0)
+              const middleThumbUp = middlePart.reduce((sum: number, d: any) => sum + d.thumb_up, 0)
+              const middleThinking = middlePart.reduce((sum: number, d: any) => sum + Math.abs(d.thinking), 0)
+              const lastThumbUp = lastPart.reduce((sum: number, d: any) => sum + d.thumb_up, 0)
+              const lastThinking = lastPart.reduce((sum: number, d: any) => sum + Math.abs(d.thinking), 0)
+              
+              const suggestions: { type: 'success' | 'warning' | 'error' | 'info'; title: string; content: string }[] = []
+              
+              if (report.stats.total_feedback === 0) {
+                suggestions.push({
+                  type: 'info',
+                  title: '暂无反馈',
+                  content: '本次演讲没有收到观众反馈，可能是观众参与度不高或反馈机制需要优化。'
+                })
+              } else {
+                if (firstThumbUp > firstThinking) {
+                  suggestions.push({
+                    type: 'success',
+                    title: '开场精彩！',
+                    content: `开头30秒获得 ${firstThumbUp} 次好评，${firstThinking} 次需改进反馈。好的开场是演讲成功的一半！`
+                  })
+                } else if (firstThinking > 0) {
+                  suggestions.push({
+                    type: 'warning',
+                    title: '开场需要加强',
+                    content: `开头30秒有 ${firstThinking} 次需改进反馈。头马演讲法则强调开场前30秒要抓住观众注意力，建议优化开场白，设置悬念或提出引人入胜的问题。`
+                  })
+                }
+                
+                if (lastThumbUp > lastThinking) {
+                  suggestions.push({
+                    type: 'success',
+                    title: '结尾圆满！',
+                    content: `结尾30秒获得 ${lastThumbUp} 次好评，${lastThinking} 次需改进反馈。好的结尾让演讲更难忘！`
+                  })
+                } else if (lastThinking > 0) {
+                  suggestions.push({
+                    type: 'warning',
+                    title: '结尾需要加强',
+                    content: `结尾30秒有 ${lastThinking} 次需改进反馈。头马演讲法则强调结尾要有强有力的呼吁或总结，建议加强结尾的号召力。`
+                  })
+                }
+                
+                if (middleThumbUp > middleThinking) {
+                  suggestions.push({
+                    type: 'success',
+                    title: '主体内容优秀',
+                    content: `演讲主体部分获得 ${middleThumbUp} 次好评，${middleThinking} 次需改进反馈。内容得到了观众的认可！`
+                  })
+                } else if (middleThinking > 0) {
+                  suggestions.push({
+                    type: 'warning',
+                    title: '主体内容需改进',
+                    content: `演讲主体部分有 ${middleThinking} 次需改进反馈。建议回顾观众反馈较多的时间段，找出需要改进的内容。`
+                  })
+                }
+                
+                if (report.stats.thumb_up_count > report.stats.thinking_count * 2) {
+                  suggestions.push({
+                    type: 'success',
+                    title: '整体表现优异！',
+                    content: `好评数量（${report.stats.thumb_up_count}）远多于需改进数量（${report.stats.thinking_count}），这是一场非常成功的演讲！`
+                  })
+                } else if (report.stats.thumb_up_count > report.stats.thinking_count) {
+                  suggestions.push({
+                    type: 'success',
+                    title: '整体表现良好',
+                    content: `好评数量（${report.stats.thumb_up_count}）多于需改进数量（${report.stats.thinking_count}），演讲整体得到了观众的认可。`
+                  })
+                } else if (report.stats.thinking_count > report.stats.thumb_up_count) {
+                  suggestions.push({
+                    type: 'error',
+                    title: '需要继续改进',
+                    content: `需改进数量（${report.stats.thinking_count}）多于好评数量（${report.stats.thumb_up_count}）。头马演讲强调每次演讲都是学习的机会，建议针对反馈较多的问题进行针对性练习。`
+                  })
+                }
               }
-              return null
+              
+              return suggestions.length === 0 ? null : suggestions.map((s, index) => (
+                <div key={index} className={`border-l-4 p-4 rounded ${
+                  s.type === 'success' ? 'bg-green-50 border-green-500' :
+                  s.type === 'warning' ? 'bg-yellow-50 border-yellow-500' :
+                  s.type === 'error' ? 'bg-red-50 border-red-500' :
+                  'bg-blue-50 border-blue-500'
+                }`}>
+                  <p className={`font-bold ${
+                    s.type === 'success' ? 'text-green-800' :
+                    s.type === 'warning' ? 'text-yellow-800' :
+                    s.type === 'error' ? 'text-red-800' :
+                    'text-blue-800'
+                  }`}>{s.title}</p>
+                  <p className={`text-sm ${
+                    s.type === 'success' ? 'text-green-700' :
+                    s.type === 'warning' ? 'text-yellow-700' :
+                    s.type === 'error' ? 'text-red-700' :
+                    'text-blue-700'
+                  }`}>{s.content}</p>
+                </div>
+              ))
             })()}
           </div>
         </div>
